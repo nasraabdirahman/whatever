@@ -1,11 +1,108 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+using System;
+using System.Collections.Generic;
+using System.Reflection.Metadata.Ecma335;
+using System.Threading.Tasks;
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
-    <RootNamespace>to_do</RootNamespace>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+namespace to_do
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            //List <typ of object you store> name = new List<type>();
+            List<TaskItem> list = new List<TaskItem>();
+            bool running = true;
+            while(running)
+            {
+                Console.WriteLine("---- To-do List ----\n");
+                Console.WriteLine("Here are your options\n");
+                Console.WriteLine("1.Add Task\n");
+                Console.WriteLine("2. Delete all completed Task\n");
+                Console.WriteLine("3. Display Task\n");
+                Console.WriteLine("4. Clear schedule\n");
+                Console.WriteLine("5. Mark completed tasks\n");
+                Console.WriteLine("6. Exit\n");
+                int op = Convert.ToInt32(Console.ReadLine());
+                switch (op)
+                {
+                    case 1:
+                        Console.WriteLine("Enter task Title\n");
+                        string inputTitle = Console.ReadLine();
+                        Console.WriteLine("Enter task description\n");
+                        string description = Console.ReadLine();
+                        TaskItem taskItem = new TaskItem
+                        {
+                            Title = inputTitle,
+                            Description = description,
+                            IsCompleted = false,
+                        };
+                        list.Add(taskItem);
+                        break;
+                    case 2:
+                      for(int i = list.Count - 1; i >= 0; i-- )
+                        {
+                            if(list[i].IsCompleted)
+                            {
+                                list.RemoveAt(i);
+                            }
+                        }
+                        break;
+                    case 3:
+                        if(list.Count == 0)
+                        {
+                            Console.WriteLine("No task available!\n");
+                            break;
+                        }
+                        foreach (TaskItem task in list)
+                        {
+                            string status = task.IsCompleted ? "Completed" : "Not completed";
+                            Console.WriteLine("Here is your To-Do list:\n");
+                            Console.WriteLine("Task Title: " + task.Title + "\n");
+                            Console.WriteLine("Description: " + task.Description + "\n");
+                            Console.WriteLine("Status: " + status + "\n");
+                            Console.WriteLine("------------------------------------------");
+                        }
+                        break;
+                    case 4:
+                        list.Clear();
+                        break;
+                    case 5:
+                        if (list.Count == 0)
+                        {
+                            Console.WriteLine("No task available!\n");
+                            break;
+                        }
+                        Console.WriteLine("Select task number to mark as completed\n");
+                        for(int i = 0; i<list.Count; i++)
+                        {
+                            string taskStatus = list[i].IsCompleted ? "Completed" : "Not completed";
+                            Console.WriteLine($"{i}.{list[i].Title} - {taskStatus}");
+                        }
+                        Console.WriteLine("Mark which task you want to mark completed\n");
+                        int choice = Convert.ToInt32( Console.ReadLine() );
+                        if(choice >= 0 && choice < list.Count)
+                        {
+                            list[choice].IsCompleted = true;
+                            Console.WriteLine("Task mark as completed\n");
+                        }
+                        break;
+                    case 6:
+                        running = false;
+                        Console.WriteLine("Exiting...\n");
+                        break;
 
-</Project>
+                    default:
+                            Console.WriteLine("Invalid option\n");
+                        break;
+                }
+            }
+        }
+    }
+
+    public class TaskItem
+    {
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public bool IsCompleted { get; set; }
+    }
+}
